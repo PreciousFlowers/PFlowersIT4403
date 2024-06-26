@@ -1,72 +1,83 @@
-body {
-    font-family: Arial, sans-serif;
+/* Importing the Barlow font */
+@import url('https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+/* Resetting margins and paddings */
+body, h1, h2, p, ul, li {
     margin: 0;
     padding: 0;
-    background-color: #f5f5f5;
-    color: #333;
 }
 
+/* General body styles */
+body {
+    font-family: 'Barlow', sans-serif;
+    background-color: #2c2c2c;
+    color: #e0e0e0;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+/* Header and footer styles */
+header, footer {
+    background-color: #1a1a1a;
+    color: #00bfff;
+    text-align: center;
+    padding: 15px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Container for main content */
 .container {
     width: 80%;
-    margin: 0 auto;
+    margin: 20px auto;
     padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #3d3d3d;
     border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
 }
 
-header {
-    text-align: center;
-    padding: 20px 0;
-    background-color: #ff69b4;
-    color: #fff;
+/* Headings */
+h1, h2 {
+    color: #00bfff;
+    margin-bottom: 20px;
 }
 
-header h1 {
-    margin: 0;
-    font-size: 2.5em;
+/* Paragraph and other text elements */
+p {
+    margin-bottom: 20px;
 }
 
-header p {
-    margin: 5px 0;
-    font-size: 1.2em;
-}
-
-section {
-    margin-top: 20px;
-}
-
-section h2 {
-    font-size: 1.8em;
-    color: #ff69b4;
-    border-bottom: 2px solid #ff69b4;
-    padding-bottom: 10px;
-}
-
-section p, section a {
-    font-size: 1.1em;
-}
-
-.milestones {
-    list-style: none;
-    padding: 0;
-}
-
-.milestones li {
-    margin: 10px 0;
-}
-
-.milestones a {
-    text-decoration: none;
-    color: #ff69b4;
-}
-
-.json-content {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #f0f0f0;
-    border: 1px solid #ff69b4;
+/* Preformatted text */
+pre {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    padding: 15px;
     border-radius: 5px;
+    overflow: auto;
     white-space: pre-wrap;
-    font-family: monospace;
+    word-wrap: break-word;
+}
+
+/* Link styles */
+a {
+    color: #00bfff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Footer styles */
+footer p {
+    margin: 0;
+}
+
+/* List styles */
+ul {
+    list-style-type: none;
+}
+
+ul li {
+    margin: 10px 0;
 }
