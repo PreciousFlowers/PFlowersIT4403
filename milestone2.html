@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milestone 2: Google Books API</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Google Books API</h1>
+        <nav>
+            <ul>
+                <li><a href="milestone2.html">Home</a></li>
+                <li><a href="bookshelf.html">My Bookshelf</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="container">
+        <section id="search-section">
+            <h2>Book Search</h2>
+            <input type="text" id="searchTerm" placeholder="Enter search term">
+            <button id="searchButton">Search</button>
+            <div id="searchResults"></div>
+            <div id="pagination"></div>
+        </section>
+    </div>
+    <footer>
+        <p>&copy; 2024 Precious Flowers. All rights reserved.</p>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#searchButton').click(function() {
+                const searchTerm = $('#searchTerm').val().toLowerCase();
+                if (searchTerm) {
+                    // Load JSON data from local file
+                    $.getJSON('json-files/google-books-search.json', function(data) {
+                        const filteredBooks = data.items.filter(book =>
+                            book.volumeInfo.title.toLowerCase().includes(searchTerm) ||
+                            book.volumeInfo.description.toLowerCase().includes(searchTerm)
+                        );
+                        displayResults(filteredBooks);
+                    }).fail(function(jqxhr, textStatus, error) {
+                        console.error("Request Failed: " + textStatus + ", " + error);
+                    });
+                }
+            });
+
+            function displayResults(books) {
+                $('#searchResults').empty();
+                $('#pagination').empty();
+                if (books.length > 0) {
+                    let output = '';
+                    books.forEach((book, index) => {
+                        const bookInfo = book.volumeInfo;
+                        const title = bookInfo.title;
+                        const thumbnail = bookInfo.imageLinks ? bookInfo.imageLinks.thumbnail : 'no_image.png';
+                        output += `
+                            <div class="book">
+                                <h3><a href="bookdetails.html?id=${book.id}">${title}</a></h3>
+                                <img src="${thumbnail}" alt="${title}">
+                            </div>
+                        `;
+                    });
+                    $('#searchResults').html(output);
+                    createPagination(books.length);
+                } else {
+                    $('#searchResults').html('<p>No books found.</p>');
+                }
+            }
+
+            function createPagination(totalResults) {
+                const resultsPerPage = 10;
+                const totalPages = Math.ceil(totalResults / resultsPerPage);
+                let pagination = '<select id="pageSelect">';
+                for (let i = 1; i <= totalPages; i++) {
+                    pagination += `<option value="${i}">${i}</option>`;
+                }
+                pagination += '</select>';
+                $('#pagination').html(pagination);
+                $('#pageSelect').change(function() {
+                    const page = $(this).val();
+                    const startIndex = (page - 1) * resultsPerPage;
+                    const searchTerm = $('#searchTerm').val().toLowerCase();
+                    $.getJSON('json-files/google-books-search.json', function(data) {
+                        const filteredBooks = data.items.filter(book =>
+                            book.volumeInfo.title.toLowerCase().includes(searchTerm) ||
+                            book.volumeInfo.description.toLowerCase().includes(searchTerm)
+                        );
+                        displayResults(filteredBooks.slice(startIndex, startIndex + resultsPerPage));
+                    }).fail(function(jqxhr, textStatus, error) {
+                        console.error("Request Failed: " + textStatus + ", " + error);
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

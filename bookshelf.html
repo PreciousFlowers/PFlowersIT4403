@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookshelf</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>My Bookshelf</h1>
+        <nav>
+            <ul>
+                <li><a href="milestone2.html">Home</a></li>
+                <li><a href="bookshelf.html">My Bookshelf</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="container">
+        <div id="bookshelf"></div>
+    </div>
+    <footer>
+        <p>&copy; 2024 Precious Flowers. All rights reserved.</p>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            loadBookshelfData();
+        });
+
+        function loadBookshelfData() {
+            $.getJSON('json-files/google-books-search.json', function(data) {
+                displayBookshelfData(data);
+            }).fail(function(jqxhr, textStatus, error) {
+                handleError(textStatus, error);
+            });
+        }
+
+        function displayBookshelfData(data) {
+            let output = '';
+            data.items.forEach(book => {
+                const bookInfo = book.volumeInfo;
+                const title = bookInfo.title;
+                const thumbnail = bookInfo.imageLinks ? bookInfo.imageLinks.thumbnail : 'no_image.png';
+                output += `
+                    <div class="book">
+                        <h3><a href="bookdetails.html?id=${book.id}">${title}</a></h3>
+                        <img src="${thumbnail}" alt="${title}">
+                    </div>
+                `;
+            });
+            $('#bookshelf').html(output);
+        }
+
+        function handleError(textStatus, error) {
+            console.error("Request Failed: " + textStatus + ", " + error);
+            $('#bookshelf').text('Error: Could not load bookshelf data.');
+        }
+    </script>
+</body>
+</html>

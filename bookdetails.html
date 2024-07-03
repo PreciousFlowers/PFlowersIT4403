@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Details</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Book Details</h1>
+        <nav>
+            <ul>
+                <li><a href="milestone2.html">Home</a></li>
+                <li><a href="bookshelf.html">My Bookshelf</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="container">
+        <section id="book-details-section">
+            <div id="bookDetails"></div>
+        </section>
+    </div>
+    <footer>
+        <p>&copy; 2024 Precious Flowers. All rights reserved.</p>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const bookId = urlParams.get('id');
+            if (bookId) {
+                $.getJSON('json-files/google-books-search.json', function(data) {
+                    const book = data.items.find(b => b.id === bookId);
+                    if (book) {
+                        const bookInfo = book.volumeInfo;
+                        const title = bookInfo.title;
+                        const authors = bookInfo.authors ? bookInfo.authors.join(', ') : 'N/A';
+                        const publisher = bookInfo.publisher ? bookInfo.publisher : 'N/A';
+                        const description = bookInfo.description ? bookInfo.description : 'No description available.';
+                        const thumbnail = bookInfo.imageLinks ? bookInfo.imageLinks.thumbnail : 'no_image.png';
+
+                        const output = `
+                            <h3>${title}</h3>
+                            <img src="${thumbnail}" alt="${title}">
+                            <p><strong>Authors:</strong> ${authors}</p>
+                            <p><strong>Publisher:</strong> ${publisher}</p>
+                            <p><strong>Description:</strong> ${description}</p>
+                        `;
+                        $('#bookDetails').html(output);
+                    } else {
+                        $('#bookDetails').html('<p>Book not found.</p>');
+                    }
+                }).fail(function(jqxhr, textStatus, error) {
+                    console.error("Request Failed: " + textStatus + ", " + error);
+                    $('#bookDetails').text('Error: Could not load book details.');
+                });
+            } else {
+                $('#bookDetails').html('<p>No book selected.</p>');
+            }
+        });
+    </script>
+</body>
+</html>
