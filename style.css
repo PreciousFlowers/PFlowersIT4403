@@ -83,7 +83,7 @@ nav ul li a:hover {
 }
 
 /* Sections */
-.project-info, .course-info, .table-of-contents, #search-section, #book-details-section, #bookshelf-section {
+.project-info, .course-info, .table-of-contents, .search-section, .book-details-section, .bookshelf-section {
     margin-bottom: 20px;
     background-color: #2c2c2c;
     border-radius: 8px;
@@ -167,4 +167,15 @@ ul li a:hover {
 
 .book img {
     margin-right: 20px;
+}
+
+/* Book title styles */
+.book h3 {
+    cursor: pointer;
+    color: #ffd500;
+}
+
+.book h3:hover {
+    text-decoration: underline;
+    color: #ffd500;
 }

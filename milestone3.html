@@ -64,15 +64,17 @@
                 books.forEach(function(book) {
                     let title = book.volumeInfo.title;
                     let thumbnail = book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.thumbnail : 'no_image.png';
+                    // Book element with an anchor tag for better semantics
                     let bookElement = `<div class="book">
-                        <h3 data-id="${book.id}">${title}</h3>
+                        <a href="#" data-id="${book.id}"><h3>${title}</h3></a>
                         <img src="${thumbnail}" alt="${title}">
                     </div>`;
                     $('#searchResults').append(bookElement);
                 });
 
                 // Click event for book titles to display book details
-                $('.book h3').click(function() {
+                $('.book a').click(function(event) {
+                    event.preventDefault(); // Prevent default anchor behavior
                     let bookId = $(this).data('id');
                     displayBookDetails(bookId);
                 });
@@ -88,6 +90,7 @@
                     let description = bookInfo.description ? bookInfo.description : 'No description available.';
                     let thumbnail = bookInfo.imageLinks ? bookInfo.imageLinks.thumbnail : 'no_image.png';
 
+                    // Detailed book information
                     let details = `<h3>${title}</h3>
                         <img src="${thumbnail}" alt="${title}">
                         <p><strong>Authors:</strong> ${authors}</p>
@@ -114,15 +117,17 @@
                 books.forEach(function(book) {
                     let title = book.volumeInfo.title;
                     let thumbnail = book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.thumbnail : 'no_image.png';
+                    // Book element with an anchor tag for better semantics
                     let bookElement = `<div class="book">
-                        <h3 data-id="${book.id}">${title}</h3>
+                        <a href="#" data-id="${book.id}"><h3>${title}</h3></a>
                         <img src="${thumbnail}" alt="${title}">
                     </div>`;
                     $('#bookshelf').append(bookElement);
                 });
 
                 // Click event for book titles to display book details
-                $('.book h3').click(function() {
+                $('.book a').click(function(event) {
+                    event.preventDefault(); // Prevent default anchor behavior
                     let bookId = $(this).data('id');
                     displayBookDetails(bookId);
                 });
