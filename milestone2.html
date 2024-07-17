@@ -34,7 +34,6 @@
             $('#searchButton').click(function() {
                 const searchTerm = $('#searchTerm').val().toLowerCase();
                 if (searchTerm) {
-                    // Load JSON data from local file
                     $.getJSON('json-files/google-books-search.json', function(data) {
                         const filteredBooks = data.items.filter(book =>
                             book.volumeInfo.title.toLowerCase().includes(searchTerm) ||

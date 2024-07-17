@@ -11,19 +11,16 @@
         <h1>Google Books AJAX Search</h1>
     </header>
     <div class="container">
-        <!-- Search Section -->
         <section id="search-section">
             <h2>Book Search</h2>
             <input type="text" id="searchTerm" placeholder="Enter search term">
             <button id="searchButton">Search</button>
             <div id="searchResults"></div>
         </section>
-        <!-- Book Details Section -->
         <section id="book-details-section">
             <h2>Book Details</h2>
             <div id="bookDetails"></div>
         </section>
-        <!-- Bookshelf Section -->
         <section id="bookshelf-section">
             <h2>My Bookshelf</h2>
             <div id="bookshelf"></div>
@@ -35,7 +32,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Search button click event
             $('#searchButton').click(function() {
                 let searchTerm = $('#searchTerm').val();
                 if (searchTerm) {
@@ -43,7 +39,6 @@
                 }
             });
 
-            // Function to search for books using Google Books API
             function searchBooks(term) {
                 $.getJSON(`https://www.googleapis.com/books/v1/volumes?q=${term}`, function(data) {
                     displayResults(data.items);
@@ -52,13 +47,11 @@
                 });
             }
 
-            // Function to display search results
             function displayResults(books) {
                 $('#searchResults').empty();
                 books.forEach(function(book) {
                     let title = book.volumeInfo.title;
                     let thumbnail = book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.thumbnail : 'no_image.png';
-                    // Book element with an anchor tag for better semantics
                     let bookElement = `<div class="book">
                         <a href="#" data-id="${book.id}"><h3>${title}</h3></a>
                         <img src="${thumbnail}" alt="${title}">
@@ -66,15 +59,13 @@
                     $('#searchResults').append(bookElement);
                 });
 
-                // Click event for book titles to display book details
                 $('.book a').click(function(event) {
-                    event.preventDefault(); // Prevent default anchor behavior
+                    event.preventDefault();
                     let bookId = $(this).data('id');
                     displayBookDetails(bookId);
                 });
             }
 
-            // Function to display book details
             function displayBookDetails(bookId) {
                 $.getJSON(`https://www.googleapis.com/books/v1/volumes/${bookId}`, function(book) {
                     let bookInfo = book.volumeInfo;
@@ -84,7 +75,6 @@
                     let description = bookInfo.description ? bookInfo.description : 'No description available.';
                     let thumbnail = bookInfo.imageLinks ? bookInfo.imageLinks.thumbnail : 'no_image.png';
 
-                    // Detailed book information
                     let details = `<h3>${title}</h3>
                         <img src="${thumbnail}" alt="${title}">
                         <p><strong>Authors:</strong> ${authors}</p>
@@ -96,7 +86,6 @@
                 });
             }
 
-            // Function to load bookshelf from local JSON file
             function loadBookshelf() {
                 $.getJSON('json-files/google-books-search.json', function(data) {
                     displayBookshelf(data.items);
@@ -105,13 +94,11 @@
                 });
             }
 
-            // Function to display bookshelf
             function displayBookshelf(books) {
                 $('#bookshelf').empty();
                 books.forEach(function(book) {
                     let title = book.volumeInfo.title;
                     let thumbnail = book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.thumbnail : 'no_image.png';
-                    // Book element with an anchor tag for better semantics
                     let bookElement = `<div class="book">
                         <a href="#" data-id="${book.id}"><h3>${title}</h3></a>
                         <img src="${thumbnail}" alt="${title}">
@@ -119,15 +106,13 @@
                     $('#bookshelf').append(bookElement);
                 });
 
-                // Click event for book titles to display book details
                 $('.book a').click(function(event) {
-                    event.preventDefault(); // Prevent default anchor behavior
+                    event.preventDefault();
                     let bookId = $(this).data('id');
                     displayBookDetails(bookId);
                 });
             }
 
-            // Initial load of bookshelf
             loadBookshelf();
         });
     </script>
