@@ -75,10 +75,17 @@
             });
 
             function searchBooks(term) {
+                console.log(`Searching for books with term: ${term}`);
                 $.getJSON(`https://www.googleapis.com/books/v1/volumes?q=${term}`, function(data) {
-                    displayResults(data.items);
-                    lastSearchResults = data.items;
-                }).fail(function() {
+                    console.log('Search results:', data);
+                    if (data.items) {
+                        lastSearchResults = data.items;
+                        displayResults(data.items);
+                    } else {
+                        $('#searchResults').html('<p>No results found.</p>');
+                    }
+                }).fail(function(jqxhr, textStatus, error) {
+                    console.log(`Request Failed: ${textStatus}, ${error}`);
                     $('#searchResults').html('<p>Error: Could not load search results.</p>');
                 });
             }
@@ -109,7 +116,9 @@
             }
 
             function displayBookDetails(bookId) {
+                console.log(`Displaying details for book ID: ${bookId}`);
                 $.getJSON(`https://www.googleapis.com/books/v1/volumes/${bookId}`, function(book) {
+                    console.log('Book details:', book);
                     let bookInfo = book.volumeInfo;
                     let title = bookInfo.title;
                     let authors = bookInfo.authors ? bookInfo.authors.join(', ') : 'N/A';
@@ -124,16 +133,20 @@
                         <p><strong>Description:</strong> ${description}</p>`;
                     $('#bookDetails').html(details);
                     $('#book-details-section').show();
-                }).fail(function() {
+                }).fail(function(jqxhr, textStatus, error) {
+                    console.log(`Request Failed: ${textStatus}, ${error}`);
                     $('#bookDetails').html('<p>Error: Could not load book details.</p>');
                     $('#book-details-section').show();
                 });
             }
 
             function loadBookshelf() {
-                $.getJSON('json-files/google-books-search.json', function(data) {
+                console.log('Loading bookshelf data...');
+                $.getJSON('google-books-search.json', function(data) {
+                    console.log('Bookshelf data:', data);
                     displayBookshelf(data.items);
-                }).fail(function() {
+                }).fail(function(jqxhr, textStatus, error) {
+                    console.log(`Request Failed: ${textStatus}, ${error}`);
                     $('#bookshelf').html('<p>Error: Could not load bookshelf data.</p>');
                 });
             }
