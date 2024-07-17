@@ -18,17 +18,21 @@
         </nav>
     </header>
     <div class="container">
+        <!-- Search Section -->
         <section id="search-section">
             <h2>Book Search</h2>
             <input type="text" id="searchTerm" placeholder="Enter search term">
             <button id="searchButton">Search</button>
             <div id="searchResults"></div>
+            <div id="pagination"></div>
             <div id="searchHistory"></div>
         </section>
+        <!-- Book Details Section -->
         <section id="book-details-section" style="display: none;">
             <h2>Book Details</h2>
             <div id="bookDetails"></div>
         </section>
+        <!-- Bookshelf Section -->
         <section id="bookshelf-section">
             <h2>My Bookshelf</h2>
             <div id="viewButtons">
@@ -46,6 +50,7 @@
         $(document).ready(function() {
             let currentView = 'grid';
             let lastSearchResults = [];
+            let searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
 
             loadSearchHistory();
 
@@ -75,17 +80,11 @@
             });
 
             function searchBooks(term) {
-                console.log(`Searching for books with term: ${term}`);
                 $.getJSON(`https://www.googleapis.com/books/v1/volumes?q=${term}`, function(data) {
-                    console.log('Search results:', data);
-                    if (data.items) {
-                        lastSearchResults = data.items;
-                        displayResults(data.items);
-                    } else {
-                        $('#searchResults').html('<p>No results found.</p>');
-                    }
-                }).fail(function(jqxhr, textStatus, error) {
-                    console.log(`Request Failed: ${textStatus}, ${error}`);
+                    lastSearchResults = data.items;
+                    displayResults(data.items);
+                    setupPagination(data.items.length);
+                }).fail(function() {
                     $('#searchResults').html('<p>Error: Could not load search results.</p>');
                 });
             }
@@ -116,9 +115,7 @@
             }
 
             function displayBookDetails(bookId) {
-                console.log(`Displaying details for book ID: ${bookId}`);
                 $.getJSON(`https://www.googleapis.com/books/v1/volumes/${bookId}`, function(book) {
-                    console.log('Book details:', book);
                     let bookInfo = book.volumeInfo;
                     let title = bookInfo.title;
                     let authors = bookInfo.authors ? bookInfo.authors.join(', ') : 'N/A';
@@ -133,20 +130,16 @@
                         <p><strong>Description:</strong> ${description}</p>`;
                     $('#bookDetails').html(details);
                     $('#book-details-section').show();
-                }).fail(function(jqxhr, textStatus, error) {
-                    console.log(`Request Failed: ${textStatus}, ${error}`);
+                }).fail(function() {
                     $('#bookDetails').html('<p>Error: Could not load book details.</p>');
                     $('#book-details-section').show();
                 });
             }
 
             function loadBookshelf() {
-                console.log('Loading bookshelf data...');
-                $.getJSON('google-books-search.json', function(data) {
-                    console.log('Bookshelf data:', data);
+                $.getJSON('json-files/google-books-search.json', function(data) {
                     displayBookshelf(data.items);
-                }).fail(function(jqxhr, textStatus, error) {
-                    console.log(`Request Failed: ${textStatus}, ${error}`);
+                }).fail(function() {
                     $('#bookshelf').html('<p>Error: Could not load bookshelf data.</p>');
                 });
             }
@@ -176,37 +169,42 @@
                 });
             }
 
-            loadBookshelf();
-
             function updateSearchHistory(term) {
-                let searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
-                searchHistory = searchHistory.filter(item => item !== term);
-                searchHistory.unshift(term);
-                localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
-                displaySearchHistory();
-            }
-
-            function displaySearchHistory() {
-                let searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
-                $('#searchHistory').empty();
-                if (searchHistory.length > 0) {
-                    let historyHtml = '<h3>Search History</h3><ul>';
-                    searchHistory.forEach(term => {
-                        historyHtml += `<li><a href="#" class="search-history-item">${term}</a></li>`;
-                    });
-                    historyHtml += '</ul>';
-                    $('#searchHistory').html(historyHtml);
-
-                    $('.search-history-item').click(function(event) {
-                        event.preventDefault();
-                        let searchTerm = $(this).text();
-                        $('#searchTerm').val(searchTerm);
-                        searchBooks(searchTerm);
-                    });
+                if (!searchHistory.includes(term)) {
+                    searchHistory.push(term);
+                    localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+                    loadSearchHistory();
                 }
             }
 
-            loadSearchHistory();
+            function loadSearchHistory() {
+                $('#searchHistory').empty();
+                searchHistory.forEach(term => {
+                    $('#searchHistory').append(`<button class="history-item">${term}</button>`);
+                });
+
+                $('.history-item').click(function() {
+                    let term = $(this).text();
+                    $('#searchTerm').val(term);
+                    searchBooks(term);
+                });
+            }
+
+            function setupPagination(totalItems) {
+                const itemsPerPage = 10;
+                const totalPages = Math.ceil(totalItems / itemsPerPage);
+                $('#pagination').empty();
+                for (let i = 1; i <= totalPages; i++) {
+                    $('#pagination').append(`<button class="page-button">${i}</button>`);
+                }
+
+                $('.page-button').click(function() {
+                    let pageIndex = $(this).text() - 1;
+                    displayResults(lastSearchResults.slice(pageIndex * itemsPerPage, (pageIndex + 1) * itemsPerPage));
+                });
+            }
+
+            loadBookshelf();
         });
     </script>
 </body>
