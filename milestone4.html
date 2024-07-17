@@ -12,7 +12,7 @@
         <h1>Google Books AJAX Search</h1>
         <nav>
             <ul>
-                <li><a href="#">Home</a></li>
+                <li><a href="milestone4.html">Home</a></li>
                 <li><a href="#bookshelf-section">My Bookshelf</a></li>
             </ul>
         </nav>
@@ -33,7 +33,7 @@
             <div id="bookDetails"></div>
         </section>
         <!-- Bookshelf Section -->
-        <section id="bookshelf-section">
+        <section id="bookshelf-section" style="display: none;">
             <h2>My Bookshelf</h2>
             <div id="viewButtons">
                 <button id="gridViewButton">Grid View</button>
@@ -130,9 +130,13 @@
                         <p><strong>Description:</strong> ${description}</p>`;
                     $('#bookDetails').html(details);
                     $('#book-details-section').show();
+                    $('#search-section').hide();
+                    $('#bookshelf-section').hide();
                 }).fail(function() {
                     $('#bookDetails').html('<p>Error: Could not load book details.</p>');
                     $('#book-details-section').show();
+                    $('#search-section').hide();
+                    $('#bookshelf-section').hide();
                 });
             }
 
@@ -203,6 +207,19 @@
                     displayResults(lastSearchResults.slice(pageIndex * itemsPerPage, (pageIndex + 1) * itemsPerPage));
                 });
             }
+
+            $('a[href="#bookshelf-section"]').click(function() {
+                $('#search-section').hide();
+                $('#book-details-section').hide();
+                $('#bookshelf-section').show();
+                loadBookshelf();
+            });
+
+            $('a[href="milestone4.html"]').click(function() {
+                $('#search-section').show();
+                $('#book-details-section').hide();
+                $('#bookshelf-section').hide();
+            });
 
             loadBookshelf();
         });
